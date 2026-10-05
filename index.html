@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Xbox</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+/* Xbox Series X / S style dashboard – dark, green accent, soft tiles */
+:root {
+  --green: #107C10;
+  --green-bright: #3FD33F;
+  --bg: #0E0E0E;
+  --surface: #1A1A1A;
+  --surface2: #242424;
+  --text: #FFFFFF;
+  --muted: #A0A0A0;
+  --radius: 4px;
+  --tile-w: 160px;
+  --tile-h: 90px;
+  --hero-h: min(48vh, 420px);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+
+/* ── Boot splash ── */
+#boot {
+  position: fixed; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  background: #000;
+  z-index: 1000;
+  transition: opacity .5s ease;
+}
+#boot.fade { opacity: 0; pointer-events: none; }
+.boot-logo { margin-bottom: 32px; animation: pulse 1.4s ease-in-out infinite; }
+@keyframes pulse {
+  0%,100% { opacity: .7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+.boot-bar {
+  width: 120px; height: 3px;
+  background: #222; border-radius: 2px; overflow: hidden;
+}
+.boot-fill {
+  height: 100%; width: 0;
+  background: var(--green);
+  animation: load 1.6s ease forwards;
+}
+@keyframes load { to { width: 100%; } }
+
+.hidden { display: none !important; }
+
+/* ── Top bar ── */
+#topbar {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: 56px;
+  padding: 0 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: linear-gradient(180deg, rgba(0,0,0,.85) 0%, transparent 100%);
+  z-index: 50;
+}
+.tb-left, .tb-right { display: flex; gap: 8px; align-items: center; }
+.tb-center { flex: 1; display: flex; justify-content: center; max-width: 420px; margin: 0 16px; }
+.tb-btn {
+  background: transparent; border: none; color: #fff;
+  width: 40px; height: 40px; border-radius: 50%;
+  display: grid; place-items: center; cursor: pointer;
+  opacity: .75; transition: .15s;
+}
+.tb-btn:hover, .tb-btn:focus { opacity: 1; background: rgba(255,255,255,.1); outline: none; }
+.avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, #107C10, #0B5A0B);
+  display: grid; place-items: center;
+  font-weight: 600; font-size: 14px;
+}
+.search-wrap {
+  display: flex; align-items: center; gap: 10px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 20px;
+  padding: 6px 14px;
+  width: 100%;
+  transition: .2s;
+}
+.search-wrap:focus-within {
+  background: rgba(255,255,255,.12);
+  border-color: var(--green);
+}
+#search {
+  flex: 1; background: none; border: none; color: #fff;
+  font-size: 14px; outline: none;
+}
+#search::placeholder { color: var(--muted); }
+
+/* ── Home ── */
+#home {
+  position: absolute; inset: 0;
+  overflow-y: auto; overflow-x: hidden;
+  padding-top: 56px;
+  scroll-behavior: smooth;
+}
+#home::-webkit-scrollbar { width: 6px; }
+#home::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+
+/* Hero */
+.hero {
+  position: relative;
+  height: var(--hero-h);
+  margin: 0 0 28px;
+  overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  transition: background-image .6s ease;
+  filter: brightness(.55);
+}
+.hero-fade {
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, rgba(14,14,14,.95) 0%, rgba(14,14,14,.4) 45%, transparent 70%),
+              linear-gradient(0deg, var(--bg) 0%, transparent 35%);
+}
+.hero-content {
+  position: relative; z-index: 2;
+  height: 100%;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 0 5vw 40px;
+  max-width: 640px;
+}
+.hero-badge {
+  display: inline-block;
+  background: var(--green);
+  color: #fff;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: .08em;
+  padding: 3px 8px;
+  border-radius: 2px;
+  margin-bottom: 10px;
+  width: fit-content;
+}
+#hero-title {
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 600;
+  line-height: 1.15;
+  margin-bottom: 8px;
+  text-shadow: 0 2px 12px rgba(0,0,0,.6);
+}
+#hero-desc {
+  color: var(--muted);
+  font-size: 14px;
+  margin-bottom: 18px;
+  max-width: 420px;
+  line-height: 1.4;
+}
+.hero-actions { display: flex; gap: 12px; }
+.btn-primary, .btn-secondary {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 22px;
+  font-size: 15px; font-weight: 600;
+  border: none; border-radius: var(--radius);
+  cursor: pointer; transition: .15s;
+}
+.btn-primary {
+  background: var(--green); color: #fff;
+}
+.btn-primary:hover { background: #0d6a0d; }
+.btn-secondary {
+  background: rgba(255,255,255,.12); color: #fff;
+}
+.btn-secondary:hover { background: rgba(255,255,255,.2); }
+
+/* Rows */
+.row {
+  margin-bottom: 28px;
+  padding: 0 5vw;
+}
+.row-title {
+  font-size: 18px; font-weight: 600;
+  margin-bottom: 12px;
+  letter-spacing: .01em;
+}
+.row-scroll {
+  display: flex; gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+.row-scroll::-webkit-scrollbar { height: 4px; }
+.row-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+
+.tile {
+  flex: none;
+  width: var(--tile-w);
+  height: calc(var(--tile-w) * 0.56);
+  border-radius: var(--radius);
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+  background: var(--surface2);
+  scroll-snap-align: start;
+  transition: transform .15s, box-shadow .15s;
+  outline: none;
+}
+.tile:hover, .tile:focus {
+  transform: scale(1.06);
+  box-shadow: 0 8px 24px rgba(0,0,0,.5);
+  z-index: 2;
+}
+.tile:focus { outline: 2px solid var(--green-bright); outline-offset: 2px; }
+.tile img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  background: #1a1a1a;
+}
+.tile .label {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 18px 8px 6px;
+  background: linear-gradient(transparent, rgba(0,0,0,.85));
+  font-size: 12px; font-weight: 500;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.tile.wide {
+  width: calc(var(--tile-w) * 1.7);
+}
+
+/* Search panel */
+#search-panel {
+  position: absolute; inset: 56px 0 0;
+  overflow-y: auto;
+  padding: 24px 5vw;
+  background: var(--bg);
+  z-index: 40;
+}
+#search-panel h2 { font-size: 20px; margin-bottom: 16px; }
+.tile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 14px;
+}
+.tile-grid .tile { width: 100%; height: auto; aspect-ratio: 16/9; }
+
+/* Player */
+#player {
+  position: fixed; inset: 0;
+  background: #000;
+  z-index: 200;
+  display: flex; flex-direction: column;
+}
+#player-bar {
+  height: 48px;
+  display: flex; align-items: center; gap: 12px;
+  padding: 0 12px;
+  background: #111;
+  flex-shrink: 0;
+}
+#player-title {
+  flex: 1;
+  font-size: 14px; font-weight: 500;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+#game-frame {
+  flex: 1; width: 100%; border: none; background: #000;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  :root { --tile-w: 130px; --hero-h: 36vh; }
+  .hero-content { padding-bottom: 24px; }
+  #hero-title { font-size: 24px; }
+}
+@media (min-width: 1200px) {
+  :root { --tile-w: 180px; }
+}
+</style>
+</head>
+<body>
+  <!-- Boot / splash -->
+  <div id="boot">
+    <div class="boot-logo">
+      <svg viewBox="0 0 24 24" width="72" height="72" fill="#107C10">
+        <path d="M4.102 21.033C4.243 21.336 4.5 22 4.9 22c.5 0 .8-.4 1.1-.9.4-.7.8-1.5 1.3-2.1.6-.8 1.4-1.4 2.3-1.4.7 0 1.3.3 1.9.7.5.4 1 .8 1.5.8s1-.4 1.5-.8c.6-.4 1.2-.7 1.9-.7.9 0 1.7.6 2.3 1.4.5.6.9 1.4 1.3 2.1.3.5.6.9 1.1.9.4 0 .657-.664.798-.967C21.9 18.8 23 15.5 23 12c0-6.1-4.9-11-11-11S1 5.9 1 12c0 3.5 1.1 6.8 3.102 9.033zM12 4.5c1.2 0 2.3.4 3.2 1.1-.8.7-1.9 1.1-3.2 1.1s-2.4-.4-3.2-1.1C9.7 4.9 10.8 4.5 12 4.5zm-5.5 7.2c0-1.5 1.2-2.7 2.7-2.7s2.7 1.2 2.7 2.7-1.2 2.7-2.7 2.7-2.7-1.2-2.7-2.7zm8.3 0c0-1.5 1.2-2.7 2.7-2.7s2.7 1.2 2.7 2.7-1.2 2.7-2.7 2.7-2.7-1.2-2.7-2.7z"/>
+      </svg>
+    </div>
+    <div class="boot-bar"><div class="boot-fill"></div></div>
+  </div>
+
+  <!-- Main shell -->
+  <div id="shell" class="hidden">
+    <!-- Top bar -->
+    <header id="topbar">
+      <div class="tb-left">
+        <button class="tb-btn" id="btn-home" title="Home">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        </button>
+        <button class="tb-btn" id="btn-store" title="Store">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M18 6h-2c0-2.21-1.79-4-4-4S8 3.79 8 6H6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6-2c1.1 0 2 .9 2 2h-4c0-1.1.9-2 2-2zm6 16H6V8h2v2c0 .55.45 1 1 1s1-.45 1-1V8h4v2c0 .55.45 1 1 1s1-.45 1-1V8h2v12z"/></svg>
+        </button>
+      </div>
+      <div class="tb-center">
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          <input type="search" id="search" placeholder="Search games" autocomplete="off" spellcheck="false">
+        </div>
+      </div>
+      <div class="tb-right">
+        <button class="tb-btn" id="btn-profile" title="Profile">
+          <div class="avatar">G</div>
+        </button>
+      </div>
+    </header>
+
+    <!-- Home view -->
+    <main id="home">
+      <!-- Hero -->
+      <section class="hero" id="hero">
+        <div class="hero-bg" id="hero-bg"></div>
+        <div class="hero-fade"></div>
+        <div class="hero-content">
+          <div class="hero-badge">FEATURED</div>
+          <h1 id="hero-title">Loading…</h1>
+          <p id="hero-desc"></p>
+          <div class="hero-actions">
+            <button class="btn-primary" id="hero-play">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Play
+            </button>
+            <button class="btn-secondary" id="hero-info">Details</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Rows -->
+      <div id="rows"></div>
+    </main>
+
+    <!-- Search results overlay -->
+    <div id="search-panel" class="hidden">
+      <h2>Search results</h2>
+      <div id="search-grid" class="tile-grid"></div>
+    </div>
+
+    <!-- Game player (fullscreen iframe) -->
+    <div id="player" class="hidden">
+      <div id="player-bar">
+        <button id="player-back" class="tb-btn" title="Back">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        </button>
+        <span id="player-title"></span>
+        <button id="player-fs" class="tb-btn" title="Fullscreen">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+        </button>
+      </div>
+      <iframe id="game-frame" allowfullscreen allow="gamepad; fullscreen; autoplay; keyboard-map; accelerometer; gyroscope"></iframe>
+    </div>
+  </div>
+
+  <script src="games.js"></script>
+<script>
+/* Xbox dashboard logic – pure client, no proxy */
+(function () {
+  "use strict";
+
+  const $ = (id) => document.getElementById(id);
+  const games = window.GAMES || [];
+
+  // ── Categories / rows ──
+  const ROW_DEFS = [
+    { title: "Popular", filter: (g) => (g.c || []).includes("Popular") },
+    { title: "New", filter: (g) => (g.c || []).includes("New") },
+    { title: "Puzzle", filter: (g) => (g.c || []).includes("Puzzle") },
+    { title: "Platformer", filter: (g) => (g.c || []).includes("Platformer") || (g.c || []).includes("Multi Platformer") },
+    { title: "Shooter", filter: (g) => (g.c || []).includes("Shooter") },
+    { title: "Horror", filter: (g) => (g.c || []).includes("Horror") },
+    { title: "Sports", filter: (g) => (g.c || []).includes("Sports") },
+    { title: "Rhythm & FNF", filter: (g) => (g.c || []).includes("Rhythm") || (g.c || []).includes("Fnf") },
+    { title: "Retro & Emulators", filter: (g) => {
+      const c = g.c || [];
+      return c.some((x) => ["Retro","Nes","N64","Nds","Gba","Psx","Dos","Emulator","Flash"].includes(x));
+    }},
+    { title: "3D", filter: (g) => (g.c || []).includes("3D") },
+    { title: "Multiplayer", filter: (g) => (g.c || []).includes("Multiplayer") || (g.c || []).includes("Multi Player") },
+    { title: "Idle", filter: (g) => (g.c || []).includes("Idle") },
+    { title: "Mobile", filter: (g) => (g.c || []).includes("Mobile") },
+    { title: "UGS Library", filter: (g) => (g.c || []).includes("UGS") },
+    { title: "All Games", filter: () => true },
+  ];
+
+  let heroGame = null;
+  let currentGame = null;
+
+  // ── Boot ──
+  function boot() {
+    setTimeout(() => {
+      $("boot").classList.add("fade");
+      setTimeout(() => {
+        $("boot").classList.add("hidden");
+        $("shell").classList.remove("hidden");
+        init();
+      }, 500);
+    }, 1800);
+  }
+
+  // ── Init ──
+  function init() {
+    buildRows();
+    pickHero();
+    bind();
+  }
+
+  function pickHero() {
+    const popular = games.filter((g) => (g.c || []).includes("Popular"));
+    const pool = popular.length ? popular : games;
+    heroGame = pool[Math.floor(Math.random() * Math.min(pool.length, 40))];
+    if (!heroGame) return;
+    $("hero-title").textContent = heroGame.t;
+    $("hero-desc").textContent = (heroGame.c || []).slice(0, 3).join(" · ") || "Play now";
+    const bg = $("hero-bg");
+    if (heroGame.i) {
+      bg.style.backgroundImage = `url("${heroGame.i}")`;
+    } else {
+      bg.style.background = "linear-gradient(135deg,#0B5A0B,#107C10)";
+    }
+  }
+
+  function buildRows() {
+    const container = $("rows");
+    container.innerHTML = "";
+    const used = new Set();
+
+    ROW_DEFS.forEach((def) => {
+      let list = games.filter(def.filter);
+      if (def.title !== "All Games") {
+        list = list.filter((g) => !used.has(g.t));
+        list.slice(0, 24).forEach((g) => used.add(g.t));
+      }
+      if (!list.length) return;
+      const shown = list.slice(0, def.title === "All Games" ? 60 : 30);
+
+      const row = document.createElement("section");
+      row.className = "row";
+      row.innerHTML = `<h2 class="row-title">${def.title}</h2>`;
+      const scroll = document.createElement("div");
+      scroll.className = "row-scroll";
+      scroll.setAttribute("role", "list");
+
+      shown.forEach((g) => {
+        scroll.appendChild(makeTile(g));
+      });
+      row.appendChild(scroll);
+      container.appendChild(row);
+    });
+  }
+
+  function makeTile(g) {
+    const el = document.createElement("button");
+    el.className = "tile";
+    el.type = "button";
+    el.setAttribute("role", "listitem");
+    el.title = g.t;
+    el.dataset.url = g.u;
+    el.dataset.title = g.t;
+
+    if (g.i) {
+      const img = document.createElement("img");
+      img.src = g.i;
+      img.alt = g.t;
+      img.loading = "lazy";
+      img.onerror = () => { img.style.display = "none"; };
+      el.appendChild(img);
+    }
+    const label = document.createElement("span");
+    label.className = "label";
+    label.textContent = g.t;
+    el.appendChild(label);
+
+    el.addEventListener("click", () => launch(g));
+    el.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        launch(g);
+      }
+    });
+    return el;
+  }
+
+  // ── Launch game (direct iframe, no proxy) ──
+  function launch(g) {
+    currentGame = g;
+    $("player-title").textContent = g.t;
+    const frame = $("game-frame");
+    frame.src = "about:blank";
+    $("player").classList.remove("hidden");
+    $("home").classList.add("hidden");
+    $("search-panel").classList.add("hidden");
+    setTimeout(() => {
+      frame.src = g.u;
+    }, 50);
+  }
+
+  function closePlayer() {
+    $("game-frame").src = "about:blank";
+    $("player").classList.add("hidden");
+    $("home").classList.remove("hidden");
+    currentGame = null;
+  }
+
+  // ── Search ──
+  function doSearch(q) {
+    q = (q || "").trim().toLowerCase();
+    const panel = $("search-panel");
+    const grid = $("search-grid");
+    if (!q) {
+      panel.classList.add("hidden");
+      $("home").classList.remove("hidden");
+      return;
+    }
+    $("home").classList.add("hidden");
+    panel.classList.remove("hidden");
+    const hits = games.filter((g) =>
+      g.t.toLowerCase().includes(q) ||
+      (g.c || []).some((c) => c.toLowerCase().includes(q))
+    ).slice(0, 80);
+    grid.innerHTML = "";
+    if (!hits.length) {
+      grid.innerHTML = `<p style="color:var(--muted)">No games found for “${q}”</p>`;
+      return;
+    }
+    hits.forEach((g) => grid.appendChild(makeTile(g)));
+  }
+
+  // ── Bind ──
+  function bind() {
+    $("hero-play").addEventListener("click", () => {
+      if (heroGame) launch(heroGame);
+    });
+    $("hero-info").addEventListener("click", () => {
+      if (heroGame) launch(heroGame);
+    });
+    $("btn-home").addEventListener("click", () => {
+      closePlayer();
+      $("search").value = "";
+      doSearch("");
+      $("home").scrollTo({ top: 0, behavior: "smooth" });
+    });
+    $("player-back").addEventListener("click", closePlayer);
+    $("player-fs").addEventListener("click", () => {
+      const f = $("game-frame");
+      if (f.requestFullscreen) f.requestFullscreen();
+      else if (f.webkitRequestFullscreen) f.webkitRequestFullscreen();
+    });
+
+    let searchTimer;
+    $("search").addEventListener("input", (e) => {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => doSearch(e.target.value), 180);
+    });
+    $("search").addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        e.target.value = "";
+        doSearch("");
+        e.target.blur();
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !$("player").classList.contains("hidden")) {
+        closePlayer();
+      }
+    });
+  }
+
+  // start
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot);
+  } else {
+    boot();
+  }
+})();
+
+</script>
+</body>
+</html>
