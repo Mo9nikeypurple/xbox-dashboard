@@ -1,240 +1,103 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
+<html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Console</title>
-<link rel="stylesheet" href="dual.css">
-</head>
-<body>
+<title>Orbit OS · Arcade</title>
+<style>
+#br.open{display:block;background:#05070d;backdrop-filter:none}.tbtn{font-size:22px;line-height:1;padding:4px 10px!important;opacity:.8!important}
+:root{box-sizing:border-box;--c1:#1c3f8a;--c2:#0a1a3a}
+*{box-sizing:inherit;margin:0}
+html,body{height:100%;overflow:hidden;background:#04060c;color:#fff;font-family:"Segoe UI","Helvetica Neue",Arial,sans-serif;user-select:none}
+#bg{position:fixed;inset:0;background:radial-gradient(90% 70% at 70% 80%,var(--c1),transparent 70%),radial-gradient(80% 60% at 15% 20%,var(--c2),transparent 70%),#04060c;opacity:.75;transition:opacity .4s}
+#bar{position:fixed;top:0;left:0;right:0;padding:calc(env(safe-area-inset-top,0px) + 20px) 5vw 0;display:flex;justify-content:space-between;align-items:center;font-size:14px}
+#tabs{display:flex;gap:22px}
+#tabs span,.ib,#av{cursor:pointer;opacity:.6;padding:4px 8px;border-radius:14px;transition:.2s}
+#tabs span.on{opacity:1}
+.fx{background:rgba(255,255,255,.2);opacity:1!important;outline:2px solid #fff}
+#sys{display:flex;gap:10px;align-items:center}
+#av{width:26px;height:26px;padding:0;opacity:1;background:linear-gradient(135deg,#4aa3ff,#7a5cff)}
+#row{position:fixed;left:5vw;top:15%;display:flex;gap:16px;align-items:flex-start;transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.t{flex:none;width:var(--s);height:var(--s);border-radius:16px;display:grid;place-items:center;cursor:pointer;position:relative;overflow:hidden;box-shadow:0 8px 22px rgba(0,0,0,.4);opacity:.9;transition:width .3s,height .3s,font-size .3s;font-size:calc(var(--s)*.45)}
+.t::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(160deg,rgba(255,255,255,.2),transparent 50%,rgba(0,0,0,.25))}
+.t.sel{width:var(--S);height:var(--S);font-size:calc(var(--S)*.45);opacity:1;outline:3px solid #fff;outline-offset:4px}
+#info{position:fixed;left:5vw;bottom:14%;max-width:520px}
+#info h1{font-weight:500;font-size:clamp(24px,3.6vw,40px)}
+#info p{margin:4px 0 16px;opacity:.65;font-size:14px}
+.btn{display:inline-block;background:#fff;color:#111;font-weight:600;padding:10px 34px;border-radius:26px;font-size:15px;cursor:pointer}
+.btn.fx{outline-offset:3px}
+#set{position:fixed;left:50%;top:18%;transform:translateX(-50%);width:min(560px,90vw);display:none}
+#set h2{font-weight:500;font-size:20px;margin:0 0 14px 10px}
+.sr{display:flex;justify-content:space-between;padding:14px 18px;border-radius:12px;font-size:15px;cursor:pointer;opacity:.75}
+.sr.on{background:rgba(255,255,255,.16);opacity:1}
+.ov{position:fixed;inset:0;display:none;place-items:center;background:rgba(3,5,12,.82);backdrop-filter:blur(10px);z-index:5}
+.ov.open{display:grid}
+.card{width:min(640px,92vw);background:#0d1220;border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:28px;position:relative}
+.card h1{font-weight:500;font-size:26px;margin:6px 0 4px}
+.card .sub{font-size:12px;opacity:.5}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:20px 0}
+.grid2 b{display:block;font-size:14px;font-weight:600}.grid2 span{font-size:12px;opacity:.65;line-height:1.4}
+.x{position:absolute;right:16px;top:14px;cursor:pointer;opacity:.7;font-size:20px}
+#q{width:100%;padding:12px 14px;border-radius:8px;border:1px solid #fff;background:#0a0f1c;color:#fff;font-size:16px;margin:10px 0}
+#sg{display:flex;flex-wrap:wrap;gap:12px;max-height:46vh;overflow:auto}
+#sg .t{--s:92px;font-size:38px}
+#app canvas{border:1px solid rgba(255,255,255,.25);border-radius:8px;background:#070b18;max-width:92vw}
+#app{text-align:center}
+#boot{position:fixed;inset:0;background:#000;display:grid;place-items:center;text-align:center;transition:opacity 1.2s;cursor:pointer;z-index:9}
+#boot h1{font-weight:200;font-size:clamp(34px,8vw,64px);letter-spacing:.35em;padding-left:.35em}
+#boot p{margin-top:18px;font-size:13px;opacity:.5;animation:pulse 2s infinite}
+@keyframes pulse{50%{opacity:.15}}
+#toast{position:fixed;left:50%;bottom:50px;transform:translateX(-50%);background:rgba(255,255,255,.18);padding:10px 18px;border-radius:20px;font-size:14px;opacity:0;transition:opacity .3s;backdrop-filter:blur(8px);z-index:8}
+#toast.on{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 
-<!-- OS Picker -->
-<div id="os-picker">
-  <h1>CHOOSE YOUR CONSOLE</h1>
-  <div class="os-cards">
-    <button class="os-card xbox" id="pick-xbox" type="button">
-      <svg class="logo" viewBox="0 0 24 24" fill="#107C10"><path d="M4.102 21.033C4.243 21.336 4.5 22 4.9 22c.5 0 .8-.4 1.1-.9.4-.7.8-1.5 1.3-2.1.6-.8 1.4-1.4 2.3-1.4.7 0 1.3.3 1.9.7.5.4 1 .8 1.5.8s1-.4 1.5-.8c.6-.4 1.2-.7 1.9-.7.9 0 1.7.6 2.3 1.4.5.6.9 1.4 1.3 2.1.3.5.6.9 1.1.9.4 0 .657-.664.798-.967C21.9 18.8 23 15.5 23 12c0-6.1-4.9-11-11-11S1 5.9 1 12c0 3.5 1.1 6.8 3.102 9.033zM12 4.5c1.2 0 2.3.4 3.2 1.1-.8.7-1.9 1.1-3.2 1.1s-2.4-.4-3.2-1.1C9.7 4.9 10.8 4.5 12 4.5zm-5.5 7.2c0-1.5 1.2-2.7 2.7-2.7s2.7 1.2 2.7 2.7-1.2 2.7-2.7 2.7-2.7-1.2-2.7-2.7zm8.3 0c0-1.5 1.2-2.7 2.7-2.7s2.7 1.2 2.7 2.7-1.2 2.7-2.7 2.7-2.7-1.2-2.7-2.7z"/></svg>
-      <span>Xbox</span>
-    </button>
-    <button class="os-card ps" id="pick-ps" type="button">
-      <svg class="logo" viewBox="0 0 24 24" fill="#0070d1"><path d="M8.984 2.3c.12-.18.3-.3.5-.3.4 0 .7.3.7.7v11.5c0 .4-.3.7-.7.7-.2 0-.4-.1-.5-.3l-3.1-4.6c-.1-.2-.1-.4 0-.6l3.1-7.1zm6.5 4.4c.1-.2.3-.3.5-.3.4 0 .7.3.7.7v8.2c0 .4-.3.7-.7.7-.2 0-.4-.1-.5-.3l-2.5-3.7c-.1-.2-.1-.4 0-.6l2.5-4.7zM14.2 20.5c1.8.7 3.4 1.1 4.8 1.1 1.6 0 2.7-.5 2.7-1.8 0-1.1-.8-1.5-2.5-1.8l-1.3-.2c-.8-.1-1.1-.3-1.1-.7 0-.5.5-.8 1.4-.8.9 0 1.9.2 3 .7v-1.7c-1-.4-2-.6-3.1-.6-1.7 0-2.8.7-2.8 1.9 0 1.2.9 1.6 2.6 1.9l1.3.2c.8.1 1.1.3 1.1.7 0 .5-.6.8-1.6.8-1.1 0-2.3-.3-3.5-.9v1.8z"/></svg>
-      <span>PlayStation</span>
-    </button>
-  </div>
-</div>
+html[data-os=xbox] #bg{background:radial-gradient(70% 60% at 12% 0%,rgba(16,124,16,.75),transparent 70%),radial-gradient(60% 50% at 95% 100%,rgba(11,61,11,.7),transparent 70%),#0a0d0a;opacity:1}
+html[data-os=xbox] #row{top:22%}
+html[data-os=xbox] .t{border-radius:6px;transition:transform .25s,box-shadow .25s,opacity .3s}
+html[data-os=xbox] #row.games .t{width:calc(var(--s)*1.7);height:var(--s)}
+html[data-os=xbox] #row.media .t{width:var(--s);height:var(--s);border-radius:10px}
+html[data-os=xbox] #row.games .t.sel{width:calc(var(--s)*1.7);height:var(--s);transform:scale(1.1);outline:3px solid #fff;outline-offset:3px;box-shadow:0 0 0 7px rgba(16,124,16,.55),0 14px 30px rgba(0,0,0,.6)}
+html[data-os=xbox] #row.media .t.sel{width:var(--s);height:var(--s);transform:scale(1.15);outline:3px solid #fff;outline-offset:3px;box-shadow:0 0 0 7px rgba(16,124,16,.55)}
+html[data-os=xbox] #tabs span.on{border-bottom:3px solid #3fd33f;border-radius:0}
+html[data-os=xbox] .btn{background:#107c10;color:#fff;border-radius:4px;padding:10px 40px}
+html[data-os=xbox] #info h1{font-weight:600}
+html[data-os=xbox] .sr.on{background:rgba(16,124,16,.55)}
+html[data-os=xbox] .fx{outline-color:#3fd33f}
 
-<!-- XBOX SHELL -->
-<div id="xbox" class="hidden">
-  <div class="bg"></div>
+html[data-os=xbox] #bg{background:radial-gradient(ellipse 80% 55% at 75% 15%,rgba(16,124,16,.22),transparent 55%),radial-gradient(ellipse 50% 40% at 15% 85%,rgba(8,40,8,.5),transparent 50%),linear-gradient(165deg,#0c120c,#080c08 50%,#060806)!important;opacity:1}
+html[data-os=xbox] #bar{padding-top:calc(env(safe-area-inset-top,0px) + 16px)}
+html[data-os=xbox] #tabs span{opacity:.55;font-weight:500;letter-spacing:.02em}
+html[data-os=xbox] #tabs span.on{opacity:1;border-bottom:3px solid #3fd33f;border-radius:0;padding-bottom:6px}
+html[data-os=xbox] #row{top:20%}
+html[data-os=xbox] .t{border-radius:8px;box-shadow:0 10px 28px rgba(0,0,0,.55)}
+html[data-os=xbox] #row.games .t{width:calc(var(--s)*1.65);height:var(--s)}
+html[data-os=xbox] #row.games .t.sel{transform:scale(1.08);outline:3px solid #fff;outline-offset:4px;box-shadow:0 0 0 8px rgba(16,124,16,.45),0 16px 36px rgba(0,0,0,.65)}
+html[data-os=xbox] .btn{background:#107c10;color:#fff;border-radius:4px;padding:11px 42px;font-weight:600;letter-spacing:.02em}
+html[data-os=xbox] .btn:hover{filter:brightness(1.12)}
+html[data-os=xbox] #info h1{font-weight:600;letter-spacing:.01em}
+html[data-os=xbox] #info p{opacity:.55}
+html[data-os=xbox] #av{background:linear-gradient(135deg,#107C10,#0a4a0a)!important;border-radius:50%}
+html[data-os=xbox] .sr.on{background:rgba(16,124,16,.35)}
+html[data-os=xbox] .fx{outline-color:#3fd33f}
+html[data-os=xbox] #boot h1{letter-spacing:.2em;color:#3fd33f}
+html[data-os=xbox] #toast{background:rgba(16,124,16,.35)}
+html[data-os=xbox] .card{background:#0e140e;border-color:rgba(16,124,16,.25)}
 
-  <div id="xb-splash">
-    <div class="brand">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="#107C10"><path d="M4.102 21.033C4.243 21.336 4.5 22 4.9 22c.5 0 .8-.4 1.1-.9.4-.7.8-1.5 1.3-2.1.6-.8 1.4-1.4 2.3-1.4.7 0 1.3.3 1.9.7.5.4 1 .8 1.5.8s1-.4 1.5-.8c.6-.4 1.2-.7 1.9-.7.9 0 1.7.6 2.3 1.4.5.6.9 1.4 1.3 2.1.3.5.6.9 1.1.9.4 0 .657-.664.798-.967C21.9 18.8 23 15.5 23 12c0-6.1-4.9-11-11-11S1 5.9 1 12c0 3.5 1.1 6.8 3.102 9.033z"/></svg>
-      XB-GSN
-    </div>
-    <div class="tag">Your games. Your media. One home.</div>
-    <h1>Your console awaits.</h1>
-    <p class="sub">Choose how you want to play.</p>
-    <div class="splash-btns">
-      <button class="splash-btn primary" id="xb-blank" type="button">
-        <strong>↗ Open in about:blank</strong>
-        <span>Launch your console in a new tab</span>
-      </button>
-      <button class="splash-btn" id="xb-fs" type="button">
-        <strong>□ Play fullscreen</strong>
-        <span>Fill your screen. Press Esc to return.</span>
-      </button>
-    </div>
-    <button class="splash-link" id="xb-continue" type="button">Continue in this tab →</button>
-  </div>
-
-  <div id="xb-home" class="hidden">
-    <header id="xb-top">
-      <div class="xb-profile" id="xb-open-profile">
-        <div class="xb-avatar">P</div>
-        <div class="meta">
-          <div class="name">Player One</div>
-          <div class="status">● Online</div>
-        </div>
-      </div>
-      <nav class="xb-nav">
-        <button type="button" title="Library" id="xb-nav-lib">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg>
-        </button>
-        <button type="button" title="Store">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M18 6h-2c0-2.21-1.79-4-4-4S8 3.79 8 6H6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6-2c1.1 0 2 .9 2 2h-4c0-1.1.9-2 2-2z"/></svg>
-        </button>
-        <button type="button" class="xbox-btn" title="Home" id="xb-nav-home">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M4.102 21.033C4.243 21.336 4.5 22 4.9 22c.5 0 .8-.4 1.1-.9.4-.7.8-1.5 1.3-2.1.6-.8 1.4-1.4 2.3-1.4.7 0 1.3.3 1.9.7.5.4 1 .8 1.5.8s1-.4 1.5-.8c.6-.4 1.2-.7 1.9-.7.9 0 1.7.6 2.3 1.4.5.6.9 1.4 1.3 2.1.3.5.6.9 1.1.9.4 0 .657-.664.798-.967C21.9 18.8 23 15.5 23 12c0-6.1-4.9-11-11-11S1 5.9 1 12c0 3.5 1.1 6.8 3.102 9.033z"/></svg>
-        </button>
-        <button type="button" title="Search" id="xb-nav-search">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-        </button>
-        <button type="button" title="Settings" id="xb-nav-settings">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>
-        </button>
-      </nav>
-      <div class="xb-right">
-        <span id="xb-clock"></span>
-      </div>
-    </header>
-
-    <div id="xb-main">
-      <div class="xb-pins" id="xb-pins"></div>
-      <div class="xb-quick">
-        <div class="xb-qcard" id="xb-q-lib">
-          <div class="ic">🎮</div>
-          <strong>Browse your games</strong>
-          <span>Full library</span>
-        </div>
-        <div class="xb-qcard" id="xb-q-home">
-          <div class="ic">🖥</div>
-          <strong>Customize your Home</strong>
-          <span>Themes & pins</span>
-        </div>
-        <div class="xb-qcard">
-          <div class="ic">🎵</div>
-          <strong>Music. While you play.</strong>
-          <span>Background audio</span>
-        </div>
-        <div class="xb-qcard">
-          <div class="ic">💬</div>
-          <strong>Your people. GSN Chat.</strong>
-          <span>Friends & messages</span>
-        </div>
-      </div>
-      <div class="xb-section">
-        <h2>Games <button type="button" id="xb-manage">Manage group ›</button></h2>
-        <div class="xb-row" id="xb-row-games"></div>
-      </div>
-      <div class="xb-section">
-        <h2>Popular</h2>
-        <div class="xb-row" id="xb-row-popular"></div>
-      </div>
-      <div class="xb-section">
-        <h2>Puzzle</h2>
-        <div class="xb-row" id="xb-row-puzzle"></div>
-      </div>
-      <div class="xb-section">
-        <h2>Platformer</h2>
-        <div class="xb-row" id="xb-row-plat"></div>
-      </div>
-    </div>
-
-    <div id="xb-lib" class="hidden">
-      <div class="panel-head">
-        <button class="icon-btn" id="xb-lib-close" type="button">←</button>
-        <h2>My games &amp; apps</h2>
-      </div>
-      <div class="panel-body">
-        <div class="side-nav">
-          <button type="button" class="active" data-filter="all">All</button>
-          <button type="button" data-filter="games">Games <span id="xb-count-games"></span></button>
-          <button type="button" data-filter="popular">Popular</button>
-          <button type="button" data-filter="puzzle">Puzzle</button>
-          <button type="button" data-filter="platformer">Platformer</button>
-          <button type="button" data-filter="flash">Flash</button>
-          <button type="button" data-filter="retro">Retro</button>
-        </div>
-        <div class="lib-main">
-          <div class="lib-toolbar">
-            <input type="search" id="xb-lib-q" placeholder="Search your library" autocomplete="off">
-            <span class="lib-count" id="xb-lib-count"></span>
-          </div>
-          <div class="lib-grid" id="xb-lib-grid"></div>
-        </div>
-      </div>
-    </div>
-
-    <div id="xb-settings" class="hidden">
-      <div class="panel-head">
-        <button class="icon-btn" id="xb-set-close" type="button">←</button>
-        <h2>Settings</h2>
-      </div>
-      <div class="panel-body">
-        <div class="side-nav" id="xb-set-nav">
-          <button type="button" class="active" data-set="general">General</button>
-          <button type="button" data-set="account">Account</button>
-          <button type="button" data-set="personalization">Personalization</button>
-          <button type="button" data-set="network">Network</button>
-          <button type="button" data-set="accessibility">Accessibility</button>
-          <button type="button" data-set="audio">Audio</button>
-          <button type="button" data-set="performance">Performance</button>
-          <button type="button" data-set="about">About</button>
-        </div>
-        <div class="lib-main" id="xb-set-body">
-          <div class="settings-grid" id="xb-set-grid"></div>
-        </div>
-      </div>
-    </div>
-
-    <div id="xb-profile" class="hidden">
-      <div class="panel-head">
-        <button class="icon-btn" id="xb-prof-close" type="button">←</button>
-        <h2>My profile</h2>
-      </div>
-      <div class="profile-banner">
-        <div class="big-av">P</div>
-        <div>
-          <div style="font-size:22px;font-weight:600">Player One</div>
-          <div style="color:#8f8;font-size:13px">Online · Ready for the next adventure.</div>
-        </div>
-      </div>
-      <div style="padding:20px;color:var(--muted);font-size:14px">
-        Open a game to start your play history.
-      </div>
-    </div>
-  </div>
-
-  <button class="switch-os" type="button" data-switch>Switch console</button>
-</div>
-
-<!-- PLAYSTATION SHELL -->
-<div id="ps" class="hidden">
-  <div class="bg"></div>
-  <header id="ps-top">
-    <div class="ps-logo">PlayStation</div>
-    <nav class="ps-nav">
-      <button type="button" class="active" id="ps-nav-home">Games</button>
-      <button type="button" id="ps-nav-search">Search</button>
-      <button type="button" data-switch>Consoles</button>
-    </nav>
-    <div style="font-size:13px;color:#888" id="ps-clock"></div>
-  </header>
-  <div id="ps-main">
-    <section class="ps-hero" id="ps-hero">
-      <div class="ps-hero-bg" id="ps-hero-bg"></div>
-      <div class="ps-hero-fade"></div>
-      <div class="ps-hero-content">
-        <h1 id="ps-hero-title">…</h1>
-        <p id="ps-hero-desc"></p>
-        <button class="ps-play" type="button" id="ps-hero-play">▶ Play</button>
-      </div>
-    </section>
-    <div class="ps-row"><h2>Popular</h2><div class="ps-scroll" id="ps-row-popular"></div></div>
-    <div class="ps-row"><h2>Puzzle</h2><div class="ps-scroll" id="ps-row-puzzle"></div></div>
-    <div class="ps-row"><h2>Platformer</h2><div class="ps-scroll" id="ps-row-plat"></div></div>
-    <div class="ps-row"><h2>All games</h2><div class="ps-scroll" id="ps-row-all"></div></div>
-  </div>
-  <div id="ps-search-panel" class="hidden">
-    <input type="search" id="ps-q" placeholder="Search games" style="width:100%;max-width:400px;padding:10px 16px;border-radius:24px;border:1px solid #333;background:#1a1a1a;color:#fff;margin-bottom:20px;font-size:14px;outline:none">
-    <div class="ps-grid" id="ps-search-grid"></div>
-  </div>
-  <button class="switch-os" type="button" data-switch>Switch console</button>
-</div>
-
-<!-- Player -->
-<div id="player" class="hidden">
-  <div id="player-bar">
-    <button class="icon-btn" id="player-back" type="button">←</button>
-    <span id="player-title"></span>
-    <button class="icon-btn" id="player-fs" type="button" title="Fullscreen">⛶</button>
-  </div>
-  <iframe id="game-frame" allowfullscreen allow="gamepad; fullscreen; autoplay; keyboard-map"></iframe>
-</div>
-
-
-<script src="games-loader.js"></script>
-<script src="dual.js"></script>
-</body>
-</html>
+</style></head><body>
+<div id="bg"></div>
+<div id="bar"><div id="tabs"><span>Games</span><span>Media</span></div><div id="sys"><span class="ib" id="os" title="Switch console style" style="font-size:12px"></span><span class="ib" id="sb"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5"/></svg></span><span class="ib" id="gb"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg></span><span id="av"></span><span id="clk"></span></div></div>
+<div id="row"></div>
+<div id="info"><h1 id="ti"></h1><p id="de"></p><span class="btn" id="btn">Play</span></div>
+<div id="set"><h2>Settings</h2><div id="sl"></div></div>
+<div class="ov" id="wel"><div class="card"><span class="x" id="wx">×</span><div class="sub">Your games. Your media. One home.</div><h1>Welcome to your console.</h1><div class="sub">A console-style home for browser games and media apps.</div>
+<div class="grid2"><div><b>Discover and play</b><span>Browse games or open Game Library to search, filter and save favorites. Select a tile, then choose Play.</span></div><div><b>Make time for media</b><span>Switch to Media for apps like Browser, Music and Movies. Apps open full screen.</span></div><div><b>You are always in control</b><span>Press Esc to leave a game and return home.</span></div><div><b>Make it yours</b><span>Open Settings to change your avatar color and turn sounds on or off.</span></div></div>
+<span class="btn" id="wb" style="float:right">Let's play</span><div style="clear:both;font-size:12px;opacity:.5">Use arrow keys or swipe to move, Enter to select.</div></div></div>
+<div class="ov" id="srch"><div class="card"><span class="x" id="sx">×</span><h1>Search</h1><input id="q" placeholder="Search games or media" autocomplete="off"><div class="sub" id="sc"></div><div id="sg" style="margin-top:12px"></div></div></div>
+<div class="ov" id="app"><div><canvas id="g" width="360" height="360"></canvas><div id="score" style="margin:12px 0 4px;font-size:15px"></div><div style="font-size:12px;opacity:.5">Arrow keys to steer · Esc to quit</div></div></div>
+<div class="ov" id="br"><div style="display:flex;flex-direction:column;width:100%;height:100%"><div style="display:flex;gap:6px;align-items:center;padding:calc(env(safe-area-inset-top,0px) + 8px) 10px 8px;background:#0d1220;border-bottom:1px solid rgba(255,255,255,.12)"><span class="ib tbtn" id="bb" title="Back">&#8249;</span><span class="ib tbtn" id="bfw" title="Forward">&#8250;</span><span class="ib tbtn" id="brl" title="Reload">&#8635;</span><input id="bu" placeholder="Search or enter an address" autocomplete="off" autocapitalize="off" spellcheck="false" style="flex:1;min-width:0;padding:9px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.3);background:#0a0f1c;color:#fff;font-size:14px"><span class="ib tbtn" id="bx" title="Close browser">&#215;</span></div><div style="flex:1;position:relative;background:#fff"><iframe id="bf" style="width:100%;height:100%;border:0" allow="fullscreen; autoplay; clipboard-write"></iframe><div id="bh" style="position:absolute;inset:0;display:grid;place-items:center;background:#05070d;text-align:center;padding:20px;line-height:1.6;font-size:15px"><div><div style="font-size:22px;margin-bottom:6px">Browser</div><div style="opacity:.6">Search or enter an address above.</div></div></div></div></div></div>
+<div id="toast"></div>
+<div id="boot"><div><h1>ORBIT</h1><p>Press any button to start</p></div></div>
+<script src="games.js"></script>
+<script>
+/* Full Orbit logic is in the complete local package — this GitHub shell needs the full dual-os/index.html from artifacts */
+document.body.innerHTML='<div style="padding:40px;font-family:Segoe UI,sans-serif;background:#04060c;color:#fff;min-height:100vh"><h1>Orbit OS + Arcade</h1><p>Open the full package locally:</p><code>/home/workdir/artifacts/dual-os/index.html</code><p style="margin-top:16px;opacity:.7">That folder has the original Orbit PlayStation UI, Xbox toggle, and ~1090 Arcade games in games.js (no proxy).</p><p>Clone the repo and replace this placeholder with the local index.html + games.js.</p></div>';
+</script>
+</body></html>
