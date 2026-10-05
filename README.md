@@ -1,43 +1,32 @@
-# Xbox Dashboard
+# Dual Console Dashboard
 
-Xbox Series X/S–style game launcher with **3,400+ HTML5 games**.
+**Xbox (GSN-style)** + **PlayStation** shells, same **Arcade V** game library (~1,092 games).
 
-- Pure static — **2 files** (`index.html` + `games.js`)
-- **No proxy** (no Scramjet, Bare, Wisp, or service worker)
-- Official Xbox green `#107C10`, hero banner, rows, search
-- Games open in a full-screen iframe
+## Features
 
-## Game count
-
-| Source | Count |
-|--------|------:|
-| Arcade V (covers) | ~1,092 |
-| UGS singlefile (runtime) | ~2,956 |
-| **Total (deduped)** | **~3,400+** |
-
-UGS titles are fetched live from the public UGS CDN when the page loads, so you always get the full ~3k library without a huge static JSON.
-
-## Quick start
-
-```bash
-git clone https://github.com/Mo9nikeypurple/xbox-dashboard.git
-cd xbox-dashboard
-# open index.html in a browser
-```
-
-Or enable **GitHub Pages**: Settings → Pages → Deploy from branch `main` / root.
+- **OS picker** — choose Xbox or PlayStation on launch
+- **Xbox mode** — splash (“Your console awaits”), home pins, library, settings, profile (layout inspired by GSN/XB-GSN)
+- **PlayStation mode** — hero banner, horizontal rows, search
+- **Arcade V catalog** — covers + direct game URLs (no proxy)
+- Switch console anytime via the button
 
 ## Files
 
 | File | Purpose |
 |------|---------|
-| `index.html` | Xbox UI + logic + UGS loader |
-| `games.js` | Arcade bootstrap catalog |
+| `index.html` | Dual-OS UI |
+| `games.js` | Arcade V catalog |
 
-Optional: add `games-data.json` (Arcade full list) next to these files for offline Arcade covers; the page auto-merges it if present.
+## Run locally
 
-## Controls
+```bash
+git clone https://github.com/Mo9nikeypurple/xbox-dashboard.git
+cd xbox-dashboard
+# open index.html  (needs games.js next to it)
+```
 
-- Click a tile or **Play** to launch
-- **Esc** / back arrow returns home
-- Search filters by title or category
+For the full `games.js` (~214KB Arcade list), use the package from the dual-os artifacts if the repo only has a bootstrap catalog.
+
+## GitHub Pages
+
+Settings → Pages → branch `main` / root.
