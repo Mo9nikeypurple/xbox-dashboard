@@ -1,42 +1,43 @@
 # Xbox Dashboard
 
-A lightweight **Xbox Series X/S–style** game launcher with **3,400+ HTML5 games**.
+Xbox Series X/S–style game launcher with **3,400+ HTML5 games**.
 
-- Pure static — **2 files only** (`index.html` + `games.js`)
+- Pure static — **2 files** (`index.html` + `games.js`)
 - **No proxy** (no Scramjet, Bare, Wisp, or service worker)
-- Dark theme, official Xbox green `#107C10`, hero banner, horizontal rows, search
+- Official Xbox green `#107C10`, hero banner, rows, search
 - Games open in a full-screen iframe
 
-## Quick start
+## Game count
 
-1. Clone or download this repo
-2. Open `index.html` in any modern browser  
-   *or* host the folder on GitHub Pages / Netlify / Cloudflare Pages
+| Source | Count |
+|--------|------:|
+| Arcade V (covers) | ~1,092 |
+| UGS singlefile (runtime) | ~2,956 |
+| **Total (deduped)** | **~3,400+** |
+
+UGS titles are fetched live from the public UGS CDN when the page loads, so you always get the full ~3k library without a huge static JSON.
+
+## Quick start
 
 ```bash
 git clone https://github.com/Mo9nikeypurple/xbox-dashboard.git
 cd xbox-dashboard
-# open index.html
+# open index.html in a browser
 ```
 
-## GitHub Pages
-
-Settings → Pages → Source: Deploy from a branch → `main` / root.
+Or enable **GitHub Pages**: Settings → Pages → Deploy from branch `main` / root.
 
 ## Files
 
 | File | Purpose |
 |------|---------|
-| `index.html` | UI + logic (Xbox dashboard) |
-| `games.js` | Full game catalog (~3400 entries) |
+| `index.html` | Xbox UI + logic + UGS loader |
+| `games.js` | Arcade bootstrap catalog |
 
-## Game sources
-
-- Arcade V / Blooket dump (~1100 titles with cover art)
-- UGS singlefile catalog (~2900 additional HTML5 games)
+Optional: add `games-data.json` (Arcade full list) next to these files for offline Arcade covers; the page auto-merges it if present.
 
 ## Controls
 
-- Click any tile or **Play** on the hero to launch
-- **Esc** or the back arrow returns to the dashboard
-- Search bar filters by title or category
+- Click a tile or **Play** to launch
+- **Esc** / back arrow returns home
+- Search filters by title or category
