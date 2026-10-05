@@ -1,32 +1,27 @@
 # Dual Console Dashboard
 
-**Xbox (GSN-style)** + **PlayStation** shells, same **Arcade V** game library (~1,092 games).
+**Xbox (GSN-style)** + **PlayStation** shells sharing the **Arcade V** game library.
 
-## Features
+## Open
 
-- **OS picker** — choose Xbox or PlayStation on launch
-- **Xbox mode** — splash (“Your console awaits”), home pins, library, settings, profile (layout inspired by GSN/XB-GSN)
-- **PlayStation mode** — hero banner, horizontal rows, search
-- **Arcade V catalog** — covers + direct game URLs (no proxy)
-- Switch console anytime via the button
+1. Clone or download this repo
+2. Open `index.html` in a browser (needs the `games-part*.js` files next to it)
+
+Or use GitHub Pages after enabling it on branch `main`.
+
+## What you get
+
+- **OS picker** on launch (Xbox or PlayStation)
+- **Xbox mode**: splash ("Your console awaits"), pins, library, settings, profile — layout inspired by the GSN/XB-GSN video
+- **PlayStation mode**: hero banner, rows, search
+- **Arcade V** games with covers (~1,092) + optional UGS titles at runtime
+- No proxy / no Scramjet — direct iframe launches
+- **Switch console** button on both shells
 
 ## Files
 
-| File | Purpose |
-|------|---------|
+| File | Role |
+|------|------|
 | `index.html` | Dual-OS UI |
-| `games.js` | Arcade V catalog |
-
-## Run locally
-
-```bash
-git clone https://github.com/Mo9nikeypurple/xbox-dashboard.git
-cd xbox-dashboard
-# open index.html  (needs games.js next to it)
-```
-
-For the full `games.js` (~214KB Arcade list), use the package from the dual-os artifacts if the repo only has a bootstrap catalog.
-
-## GitHub Pages
-
-Settings → Pages → branch `main` / root.
+| `games-part1.js` … `games-part3.js` | Arcade V catalog chunks |
+| `games-loader.js` | Merges parts + optional UGS |
