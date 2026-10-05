@@ -1,27 +1,26 @@
-# Dual Console Dashboard
+# Orbit OS + Arcade
 
-**Xbox (GSN-style)** + **PlayStation** shells sharing the **Arcade V** game library.
+Original **Orbit OS** shell (PlayStation style by default).
 
-## Open
+- Toggle **PlayStation ⇄ Xbox** in the top bar or Settings → Console style
+- **~1,090 Arcade V games** with covers (from `games.js`)
+- No proxy / no Scramjet — games open in a full-screen iframe
+- Press **Esc** to leave a game
 
-1. Clone or download this repo
-2. Open `index.html` in a browser (needs the `games-part*.js` files next to it)
+## Run
 
-Or use GitHub Pages after enabling it on branch `main`.
+```bash
+git clone https://github.com/Mo9nikeypurple/xbox-dashboard.git
+cd xbox-dashboard
+# open index.html (needs games.js in the same folder)
+```
 
-## What you get
+If `games.js` is missing from the repo (size limit), copy it from the local package:
+`/home/workdir/artifacts/dual-os/games.js`
 
-- **OS picker** on launch (Xbox or PlayStation)
-- **Xbox mode**: splash ("Your console awaits"), pins, library, settings, profile — layout inspired by the GSN/XB-GSN video
-- **PlayStation mode**: hero banner, rows, search
-- **Arcade V** games with covers (~1,092) + optional UGS titles at runtime
-- No proxy / no Scramjet — direct iframe launches
-- **Switch console** button on both shells
+## Controls
 
-## Files
-
-| File | Role |
-|------|------|
-| `index.html` | Dual-OS UI |
-| `games-part1.js` … `games-part3.js` | Arcade V catalog chunks |
-| `games-loader.js` | Merges parts + optional UGS |
+- Arrow keys / swipe: move tiles
+- Enter / Play: launch
+- Esc: back
+- Top bar **PlayStation ⇄ / Xbox ⇄**: switch style
